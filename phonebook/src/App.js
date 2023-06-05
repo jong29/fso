@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import pbService from './services/phonebook';
+
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -8,11 +9,11 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log(response.data);
-        setPersons(response.data);
+    pbService
+      .getAll()
+      .then(initialPhonebook => {
+        console.log(initialPhonebook);
+        setPersons(initialPhonebook);
       });
   }, []);
 
@@ -26,7 +27,14 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      setPersons(persons.concat(personObject));
+
+      pbService
+        .create(personObject)
+        .then(returnedEntry => {
+          setPersons(persons.concat(returnedEntry));
+          console.log(returnedEntry);
+        });
+
       setNewName('');
       setNewNumber('');
     }
