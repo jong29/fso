@@ -23,7 +23,6 @@ const App = () => {
       window.alert(`${newName} is already added to phonebook`);
     } else {     
       const personObject = {
-        id: persons.length + 1,
         name: newName,
         number: newNumber
       }
@@ -42,11 +41,22 @@ const App = () => {
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
-  }
+  };
 
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value);
-  }
+  };
+
+  const handleDelete = (id) => {
+    const person = persons.find(p => p.id === id);
+    if (window.confirm(`Delete ${person.name}?`)){
+      pbService.deletePerson(id)
+        .then(response => {
+          console.log(response);
+          setPersons(persons.filter(p => p.id !== id));
+        });
+    }
+  };
 
   return (
     <div>
@@ -61,7 +71,8 @@ const App = () => {
       <h2>Numbers</h2>
       {persons.map((person) => {
         return(
-          <div key={person.id}>{person.name} {person.number}</div>
+          <div key={person.id}>{person.name} {person.number} <button onClick={() => {handleDelete(person.id)}}>delete</button>
+          </div>
         )
       })}
     </div>
