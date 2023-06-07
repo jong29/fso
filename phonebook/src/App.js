@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
 import pbService from './services/phonebook';
+import './index.css';
 
+const Notification = ({ message }) => {
+  if (message === null){
+    return null;
+  }
+  
+  return(
+    <div className='notification'>{message}</div>
+  )
+}
 
 const App = () => {
-  const [persons, setPersons] = useState([]) 
-
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [addedMessage, setAddedMessage] = useState(null);
 
   useEffect(() => {
     pbService
@@ -36,6 +46,10 @@ const App = () => {
 
       setNewName('');
       setNewNumber('');
+      setAddedMessage(`Added ${personObject.name}`);
+      setTimeout(() => {
+        setAddedMessage(null);
+      }, 3000);
     }
   }
 
@@ -61,6 +75,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={addedMessage} />
       <form onSubmit={addPerson}>
         <div>name: <input value={newName} onChange={handleNameChange}/></div>
         <div>number: <input value={newNumber} onChange={handleNumberChange}/></div>
